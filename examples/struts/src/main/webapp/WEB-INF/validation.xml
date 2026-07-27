@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE form-validation PUBLIC
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.0//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
+
+<!--
+  validation.xml
+  --------------
+  Declarative validation for ApproveClaimForm.
+
+  LEGACY PATTERN: these rules are duplicated in
+  ApproveClaimForm.validate() - any drift between the two causes
+  hard-to-diagnose bugs.
+-->
+<form-validation>
+    <formset>
+        <form name="approveClaimForm">
+            <field property="claimId" depends="required">
+                <arg0 key="approveClaim.claimId"/>
+            </field>
+            <field property="approverId" depends="required">
+                <arg0 key="approveClaim.approverId"/>
+            </field>
+            <field property="approvedAmount"
+                   depends="required,double,doubleRange">
+                <arg0 key="approveClaim.approvedAmount"/>
+                <var>
+                    <var-name>min</var-name>
+                    <var-value>0.0</var-value>
+                </var>
+                <var>
+                    <var-name>max</var-name>
+                    <var-value>99999999.99</var-value>
+                </var>
+            </field>
+        </form>
+    </formset>
+</form-validation>

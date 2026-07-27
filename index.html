@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Legacy Knowledge Copilot - WA AI Code Camp Pitch</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  :root {
+    --ink: #eef3f8;
+    --muted: #a9b5c4;
+    --quiet: #748194;
+    --bg: #091019;
+    --panel: #101a25;
+    --panel-2: #152231;
+    --line: rgba(255,255,255,.14);
+    --blue: #5cc8ff;
+    --green: #39d5a5;
+    --gold: #f4c95d;
+    --coral: #ff8a7a;
+    --violet: #b69cff;
+    --shadow: 0 22px 70px rgba(0,0,0,.35);
+    --radius: 8px;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--ink);
+    background:
+      linear-gradient(180deg, rgba(92,200,255,.08), transparent 34rem),
+      linear-gradient(120deg, #091019 0%, #111924 52%, #0b111b 100%);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.75), transparent 75%);
+  }
+
+  a { color: inherit; }
+  .deck { position: relative; z-index: 1; }
+
+  .slide {
+    min-height: 100vh;
+    padding: 5rem clamp(1.2rem, 5vw, 5rem);
+    display: grid;
+    place-items: center;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+
+  .wrap {
+    width: min(1180px, 100%);
+  }
+
+  .slide-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    color: var(--quiet);
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .kicker {
+    display: inline-flex;
+    gap: .5rem;
+    align-items: center;
+    padding: .42rem .7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255,255,255,.05);
+    color: var(--muted);
+  }
+
+  h1, h2, h3 {
+    margin: 0;
+    line-height: 1.02;
+    letter-spacing: 0;
+  }
+
+  h1 {
+    max-width: 980px;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 850;
+  }
+
+  h2 {
+    max-width: 960px;
+    font-size: clamp(2rem, 5vw, 4.25rem);
+    font-weight: 820;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 780;
+  }
+
+  p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.55;
+    font-size: 1.02rem;
+  }
+
+  .lead {
+    margin-top: 1.2rem;
+    max-width: 820px;
+    color: #dce6ef;
+    font-size: clamp(1.08rem, 1.8vw, 1.42rem);
+  }
+
+  .accent {
+    color: var(--blue);
+  }
+
+  .hero-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(320px, .85fr);
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+  }
+
+  .badge-row,
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .65rem;
+    margin-top: 1.5rem;
+  }
+
+  .badge,
+  .pill {
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255,255,255,.055);
+    color: #cdd8e5;
+    padding: .56rem .8rem;
+    font-size: .86rem;
+    font-weight: 650;
+  }
+
+  .badge strong { color: white; }
+
+  .note {
+    margin-top: 1.4rem;
+    padding: .9rem 1rem;
+    border-left: 3px solid var(--gold);
+    background: rgba(244,201,93,.09);
+    color: #f7e7b3;
+    border-radius: var(--radius);
+    max-width: 820px;
+  }
+
+  .visual {
+    min-height: 420px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+      radial-gradient(circle at 80% 20%, rgba(92,200,255,.15), transparent 42%);
+    box-shadow: var(--shadow);
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .terminal {
+    height: 100%;
+    border-radius: 10px;
+    background: #061018;
+    border: 1px solid rgba(255,255,255,.11);
+    overflow: hidden;
+  }
+
+  .terminal-top {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .75rem .85rem;
+    background: rgba(255,255,255,.055);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+
+  .dot { width: .68rem; height: .68rem; border-radius: 50%; background: var(--coral); }
+  .dot:nth-child(2) { background: var(--gold); }
+  .dot:nth-child(3) { background: var(--green); }
+
+  .terminal-body {
+    padding: 1rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .88rem;
+    line-height: 1.6;
+    color: #c9d7e6;
+  }
+
+  .terminal-body .cmd { color: var(--blue); }
+  .terminal-body .good { color: var(--green); }
+  .terminal-body .warn { color: var(--gold); }
+  .terminal-body .risk { color: var(--coral); }
+
+  .grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  .card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035));
+    padding: 1.2rem;
+    min-height: 100%;
+  }
+
+  .card h3 { margin-bottom: .55rem; }
+  .card p, .card li { font-size: .95rem; }
+
+  .stat {
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    line-height: 1;
+    font-weight: 850;
+    color: var(--blue);
+  }
+
+  ul {
+    margin: .75rem 0 0;
+    padding-left: 1.1rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  li + li { margin-top: .45rem; }
+
+  .compare {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .before { border-left: 4px solid var(--coral); }
+  .after { border-left: 4px solid var(--green); }
+
+  .architecture {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .9rem;
+  }
+
+  .lane {
+    display: flex;
+    justify-content: center;
+    gap: .9rem;
+    flex-wrap: wrap;
+  }
+
+  .node {
+    min-width: 210px;
+    padding: .95rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,.055);
+    text-align: center;
+  }
+
+  .node small {
+    display: block;
+    margin-bottom: .25rem;
+    color: var(--quiet);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 750;
+  }
+
+  .connector {
+    color: var(--quiet);
+    text-align: center;
+    font-weight: 800;
+  }
+
+  .node.blue { border-color: rgba(92,200,255,.45); background: rgba(92,200,255,.1); }
+  .node.gold { border-color: rgba(244,201,93,.45); background: rgba(244,201,93,.09); }
+  .node.green { border-color: rgba(57,213,165,.45); background: rgba(57,213,165,.09); }
+  .node.coral { border-color: rgba(255,138,122,.45); background: rgba(255,138,122,.09); }
+  .node.violet { border-color: rgba(182,156,255,.45); background: rgba(182,156,255,.09); }
+
+  .demo-card code,
+  .prompt {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .prompt {
+    margin-top: 1rem;
+    white-space: pre-wrap;
+    padding: .9rem;
+    border-radius: var(--radius);
+    background: #061018;
+    border: 1px solid rgba(255,255,255,.12);
+    color: #cbd8e6;
+    font-size: .82rem;
+    line-height: 1.55;
+  }
+
+  .tag {
+    display: inline-block;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: .18rem .5rem;
+    font-size: .72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  .tag.grounded { color: var(--green); }
+  .tag.partial { color: var(--gold); }
+  .tag.inferred { color: var(--coral); }
+
+  .nav {
+    position: fixed;
+    z-index: 10;
+    right: 1rem;
+    bottom: 1rem;
+    display: flex;
+    gap: .5rem;
+  }
+
+  .nav button {
+    width: 2.8rem;
+    height: 2.8rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(9,16,25,.84);
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+
+  .progress {
+    position: fixed;
+    z-index: 20;
+    inset: 0 auto auto 0;
+    height: 4px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--blue), var(--green), var(--gold));
+  }
+
+  .speaker {
+    margin-top: 1.35rem;
+    padding: 1rem;
+    border: 1px dashed rgba(255,255,255,.2);
+    border-radius: var(--radius);
+    color: var(--muted);
+    background: rgba(0,0,0,.18);
+  }
+
+  .speaker strong {
+    color: #eef3f8;
+  }
+
+  @media (max-width: 950px) {
+    .slide { padding-block: 4rem; }
+    .hero-layout,
+    .grid.two,
+    .grid.three,
+    .grid.four,
+    .compare {
+      grid-template-columns: 1fr;
+    }
+    .visual { min-height: 320px; }
+  }
+
+  @media print {
+    body { background: white; color: #111827; }
+    body::before, .nav, .progress { display: none; }
+    .slide {
+      min-height: auto;
+      page-break-after: always;
+      padding: 2rem;
+      border-bottom: 0;
+    }
+    .card, .visual, .node, .speaker, .note {
+      background: white;
+      color: #111827;
+      border-color: #c8ced6;
+      box-shadow: none;
+    }
+    p, ul, li, .lead, .speaker { color: #374151; }
+    .terminal { border-color: #c8ced6; }
+  }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<main class="deck">
+  <section class="slide" id="slide-1">
+    <div class="wrap hero-layout">
+      <div>
+        <div class="slide-meta"><span class="kicker">WA State AI Code Camp</span><span>01 / 12</span></div>
+        <h1>Legacy Knowledge <span class="accent">Copilot</span></h1>
+        <p class="lead">A GitHub Copilot assistant that helps public-sector technologists understand legacy systems, preserve institutional knowledge, and modernize with care.</p>
+        <div class="badge-row">
+          <span class="badge"><strong>3</strong> focused agents</span>
+          <span class="badge"><strong>8</strong> reusable skills</span>
+          <span class="badge"><strong>Grounded</strong> citations</span>
+          <span class="badge"><strong>VS Code</strong> workflow</span>
+        </div>
+        <p class="note">This project will be added to the Awesome GitHub Copilot Project list: <strong>[LINK NEEDED]</strong></p>
+      </div>
+
+      <div class="visual" aria-label="Mock terminal showing grounded legacy code analysis">
+        <div class="terminal">
+          <div class="terminal-top"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+          <div class="terminal-body">
+            <div class="cmd">@legacy-code Explain NB_POST.CBL</div>
+            <br />
+            <div><span class="good">grounded</span> Control flow mapped</div>
+            <div><span class="good">cited</span> Z9 special hold -> knowledge/tribal</div>
+            <div><span class="warn">gap</span> Missing characterization test</div>
+            <br />
+            <div class="cmd">@review Check blast radius</div>
+            <div><span class="risk">blocker</span> SQL injection risk</div>
+            <div><span class="good">ok</span> do-not-touch invariant respected</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-2">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Problem</span><span>02 / 12</span></div>
+      <h2>State services often depend on systems that outlived their original documentation.</h2>
+      <p class="lead">The code still runs. The people who know the unwritten rules are busy, retiring, or already gone. That makes every change slower and riskier than it should be.</p>
+      <div class="grid four">
+        <div class="card"><div class="stat">1</div><h3>Old code</h3><p>COBOL, Struts, JCL, T-SQL, batch jobs, and stored procedures that still carry real work.</p></div>
+        <div class="card"><div class="stat">2</div><h3>Thin docs</h3><p>Runbooks, notes, and diagrams may be scattered, stale, or missing the key business rule.</p></div>
+        <div class="card"><div class="stat">3</div><h3>High stakes</h3><p>A small code change can affect nightly jobs, benefits, claims, licensing, or public-facing service delivery.</p></div>
+        <div class="card"><div class="stat">4</div><h3>Workforce pressure</h3><p>New employees need ways to learn safely without turning senior SMEs into a permanent bottleneck.</p></div>
+      </div>
+      <div class="speaker"><strong>Speaker note:</strong> This is a public-sector continuity problem, not just a software problem. The goal is to help teams keep serving people while they modernize.</div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-3">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Why Generic AI Is Not Enough</span><span>03 / 12</span></div>
+      <h2>A confident answer is not the same as a reviewable answer.</h2>
+      <p class="lead">For government technology work, the assistant has to show where the answer came from, what it inferred, and what it does not know.</p>
+      <div class="compare">
+        <div class="card before">
+          <h3>Generic code assistant</h3>
+          <ul>
+            <li>May explain code without knowing local business history.</li>
+            <li>Can sound certain when a source is missing.</li>
+            <li>May suggest a clean refactor that breaks a load-bearing invariant.</li>
+            <li>Does not automatically create an audit trail for claims.</li>
+          </ul>
+        </div>
+        <div class="card after">
+          <h3>Legacy Knowledge Copilot</h3>
+          <ul>
+            <li>Uses repo knowledge files as grounding material.</li>
+            <li>Labels confidence as <span class="tag grounded">grounded</span>, <span class="tag partial">partial</span>, or <span class="tag inferred">inferred</span>.</li>
+            <li>Checks do-not-touch rules before modernization advice.</li>
+            <li>Surfaces gaps so teams know what to document next.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-4">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Solution</span><span>04 / 12</span></div>
+      <h2>Three agents, one grounded workflow.</h2>
+      <p class="lead">The assistant separates understanding, grounding, and review so each part of the workflow has a clear job.</p>
+      <div class="grid three">
+        <div class="card">
+          <span class="pill">LegacyCodeAgent</span>
+          <h3 style="margin-top:1rem">Reads the source</h3>
+          <p>Explains COBOL, JCL, Struts, JSPs, SQL Server schemas, and stored procedures in language a modern developer can follow.</p>
+        </div>
+        <div class="card">
+          <span class="pill">KnowledgeAgent</span>
+          <h3 style="margin-top:1rem">Grounds the answer</h3>
+          <p>Finds tribal notes, runbooks, technical papers, and do-not-touch rules. Cites the source when it makes a factual claim.</p>
+        </div>
+        <div class="card">
+          <span class="pill">ReviewAgent</span>
+          <h3 style="margin-top:1rem">Reviews the risk</h3>
+          <p>Looks for security, correctness, and blast-radius issues. Recommends incremental modernization instead of big rewrites.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-5">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Architecture</span><span>05 / 12</span></div>
+      <h2>Simple enough to explain. Structured enough to extend.</h2>
+      <p class="lead">The project lives in a normal GitHub repository and follows Copilot-friendly conventions.</p>
+      <div class="architecture">
+        <div class="lane"><div class="node"><small>User</small>Developer in VS Code</div></div>
+        <div class="connector">v</div>
+        <div class="lane"><div class="node blue"><small>Surface</small>GitHub Copilot Chat</div></div>
+        <div class="connector">v</div>
+        <div class="lane"><div class="node violet"><small>Routing</small>Agent router and prompt contracts</div></div>
+        <div class="connector">v</div>
+        <div class="lane">
+          <div class="node blue"><small>Agent</small>@legacy-code</div>
+          <div class="node gold"><small>Agent</small>@knowledge</div>
+          <div class="node coral"><small>Agent</small>@review</div>
+        </div>
+        <div class="connector">v</div>
+        <div class="lane">
+          <div class="node green"><small>Sources</small>knowledge/ tribal, runbooks, papers, do-not-touch</div>
+          <div class="node"><small>Examples</small>COBOL, Struts, SQL, JCL</div>
+          <div class="node violet"><small>Skills</small>Reusable analysis instructions</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-6">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Demo 1</span><span>06 / 12</span></div>
+      <h2>Explain a legacy batch without guessing the business rules.</h2>
+      <p class="lead">The first demo opens a COBOL nightly posting program and asks the assistant to explain the control flow and magic status codes.</p>
+      <div class="grid two">
+        <div class="card demo-card">
+          <h3>Prompt</h3>
+          <div class="prompt">@legacy-code Explain examples/cobol/NB_POST.CBL end-to-end.
+Pull tribal context for magic status codes ('A','R','H','Z9').
+Cite every grounded claim.</div>
+        </div>
+        <div class="card">
+          <h3>What the audience should notice</h3>
+          <ul>
+            <li>The answer separates code structure from business meaning.</li>
+            <li>The Z9 status code is cited to a tribal knowledge file.</li>
+            <li>The output includes a Gaps section for missing evidence.</li>
+            <li>The team learns what to document next.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-7">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Demo 2</span><span>07 / 12</span></div>
+      <h2>Catch cross-layer risk before it reaches production.</h2>
+      <p class="lead">The second demo reviews a Struts action and the stored procedure it calls, with attention to the nightly batch downstream.</p>
+      <div class="grid three">
+        <div class="card"><h3>Security</h3><p>Flags SQL injection patterns and hard-coded credentials in the demo artifact.</p></div>
+        <div class="card"><h3>Correctness</h3><p>Calls out transaction-boundary and concurrency concerns where the flow crosses layers.</p></div>
+        <div class="card"><h3>Continuity</h3><p>Checks documented invariants so modernization advice does not break load-bearing behavior.</p></div>
+      </div>
+      <div class="speaker"><strong>Speaker note:</strong> This is where the story shifts from "AI explains code" to "AI helps us change code responsibly."</div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-8">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Demo 3</span><span>08 / 12</span></div>
+      <h2>Turn a hard-to-read schema into a modernization map.</h2>
+      <p class="lead">The third demo asks for a column dictionary, inferred relationships, overloaded-field notes, and a risk-ranked improvement plan.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>Input</h3>
+          <ul>
+            <li>Non-normalized SQL Server schema.</li>
+            <li>Implicit relationships without declared foreign keys.</li>
+            <li>Routing flags and magic values.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Output</h3>
+          <ul>
+            <li>Column dictionary.</li>
+            <li>Evidence-based relationship notes.</li>
+            <li>Value-versus-blast-radius modernization sequence.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-9">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Why It Fits Washington State</span><span>09 / 12</span></div>
+      <h2>Responsible AI adoption should help employees do careful work faster.</h2>
+      <p class="lead">This project is a pattern for workforce empowerment, service continuity, and practical modernization.</p>
+      <div class="grid three">
+        <div class="card"><h3>Public-sector innovation</h3><p>Uses AI where it helps: comprehension, review, and knowledge retrieval, not unchecked automation.</p></div>
+        <div class="card"><h3>Service delivery</h3><p>Supports faster onboarding and safer changes to systems that may affect public services.</p></div>
+        <div class="card"><h3>Responsible use</h3><p>Makes citations, confidence, and gaps visible so people can review and improve the answer.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-10">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Repository Pattern</span><span>10 / 12</span></div>
+      <h2>The repo becomes the place where knowledge improves.</h2>
+      <p class="lead">Every prompt, agent, skill, and knowledge file can be reviewed through normal GitHub practices.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>Current structure</h3>
+          <ul>
+            <li>.github/copilot for agents and skills.</li>
+            <li>knowledge/ for tribal notes, runbooks, and papers.</li>
+            <li>examples/ for COBOL, Struts, SQL, and JCL.</li>
+            <li>docs/ for grounding, routing, architecture, and demo guidance.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Recommended next additions</h3>
+          <ul>
+            <li>Seed knowledge/do-not-touch with worked examples.</li>
+            <li>Add screenshots and demo captures under docs/images.</li>
+            <li>Add tests for prompt contracts and routing expectations.</li>
+            <li>Add contribution guidance for new knowledge files.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-11">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Roadmap</span><span>11 / 12</span></div>
+      <h2>From demo to reusable agency pattern.</h2>
+      <div class="grid three">
+        <div class="card">
+          <span class="pill">Now</span>
+          <h3 style="margin-top:1rem">Foundation</h3>
+          <ul>
+            <li>Agents, skills, prompts, and demo corpus.</li>
+            <li>Grounding rules and confidence labels.</li>
+            <li>Presenter-ready demo path.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="pill">Next 30-90 days</span>
+          <h3 style="margin-top:1rem">Automation</h3>
+          <ul>
+            <li>Knowledge ingestion from reviewed documents.</li>
+            <li>Static analyzers for code dependency maps.</li>
+            <li>Characterization-test suggestions.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="pill">Later</span>
+          <h3 style="margin-top:1rem">Expansion</h3>
+          <ul>
+            <li>Mainframe and data-platform agents.</li>
+            <li>GitHub Actions review integration.</li>
+            <li>Inline citation panel for developers.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="slide-12">
+    <div class="wrap">
+      <div class="slide-meta"><span class="kicker">Close</span><span>12 / 12</span></div>
+      <h2>Legacy is not bad code. It is load-bearing code.</h2>
+      <p class="lead">The goal is not to replace experienced people. The goal is to preserve what they know, cite it clearly, and help the next team use it safely.</p>
+      <div class="badge-row">
+        <span class="badge">Readable</span>
+        <span class="badge">Reviewable</span>
+        <span class="badge">Grounded</span>
+        <span class="badge">Ready for careful modernization</span>
+      </div>
+      <p class="note">Repo link: <a href="https://github.com/washington-dcyf-u04_clabs/cw-legacy-codeagent" target="_blank" rel="noopener">github.com/washington-dcyf-u04_clabs/cw-legacy-codeagent</a></p>
+      <div class="speaker"><strong>Closing line:</strong> We make legacy systems easier to understand before we ask teams to change them.</div>
+    </div>
+  </section>
+</main>
+
+<div class="nav" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide">↑</button>
+  <button type="button" id="next" aria-label="Next slide">↓</button>
+</div>
+
+<script>
+(() => {
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const progress = document.getElementById("progress");
+  const prev = document.getElementById("prev");
+  const next = document.getElementById("next");
+  let active = 0;
+
+  function setActive(index, scroll = false) {
+    active = Math.max(0, Math.min(slides.length - 1, index));
+    progress.style.width = `${((active + 1) / slides.length) * 100}%`;
+    if (scroll) slides[active].scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && entry.intersectionRatio > 0.55) {
+        setActive(slides.indexOf(entry.target));
+      }
+    });
+  }, { threshold: [0.55, 0.75] });
+
+  slides.forEach((slide) => observer.observe(slide));
+  prev.addEventListener("click", () => setActive(active - 1, true));
+  next.addEventListener("click", () => setActive(active + 1, true));
+
+  document.addEventListener("keydown", (event) => {
+    const forward = ["ArrowDown", "PageDown", " "].includes(event.key);
+    const backward = ["ArrowUp", "PageUp"].includes(event.key);
+    if (forward || backward || event.key === "Home" || event.key === "End") {
+      event.preventDefault();
+    }
+    if (forward) setActive(active + 1, true);
+    if (backward) setActive(active - 1, true);
+    if (event.key === "Home") setActive(0, true);
+    if (event.key === "End") setActive(slides.length - 1, true);
+  });
+
+  setActive(0);
+})();
+</script>
+</body>
+</html>

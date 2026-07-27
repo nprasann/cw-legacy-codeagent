@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE struts-config PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 1.0//EN"
+    "http://jakarta.apache.org/struts/dtds/struts-config_1_0.dtd">
+
+<!--
+  struts-config.xml
+  -----------------
+  Classic Struts 1.0 wiring for the Approve Claim flow.
+
+  LEGACY PATTERNS DEMONSTRATED
+  ----------------------------
+   * scope="session" on form-bean: ActionForm survives across
+     requests, which when combined with a no-op reset() in
+     ApproveClaimForm causes stale data bugs.
+   * Magic forward names ("success", "input", "failure") that must
+     line up with mapping.findForward(...) calls in the Action.
+   * Single global-forward for errors - any failure ends up at the
+     same generic JSP, losing context.
+   * Validator plug-in registered but redundant rules also coded in
+     ApproveClaimForm.validate().
+-->
+<struts-config>
+
+    <!-- ============================================================
+         Form Beans
+         ============================================================ -->
+    <form-beans>
+        <form-bean
+            name="approveClaimForm"
+            type="com.example.legacy.billing.action.ApproveClaimForm"/>
+    </form-beans>
+
+    <!-- ============================================================
+         Global Forwards
+         ============================================================ -->
+    <global-forwards>
+        <forward name="globalError" path="/WEB-INF/jsp/error.jsp"/>
+        <forward name="login"       path="/login.do"/>
+    </global-forwards>
+
+    <!-- ============================================================
+         Action Mappings
+         ============================================================ -->
+    <action-mappings>
+
+        <!--
+          /approveClaim.do
+            input    -> approveClaim.jsp (re-display on validation error)
+            success  -> approveClaimConfirm.jsp
+            failure  -> error.jsp (legacy generic)
+        -->
+        <action  path="/approveClaim"
+                 type="com.example.legacy.billing.action.ApproveClaimAction"
+                 name="approveClaimForm"
+                 scope="session"
+                 validate="true"
+                 input="/WEB-INF/jsp/approveClaim.jsp">
+            <forward name="success" path="/WEB-INF/jsp/approveClaimConfirm.jsp"/>
+            <forward name="input"   path="/WEB-INF/jsp/approveClaim.jsp"/>
+            <forward name="failure" path="/WEB-INF/jsp/error.jsp"/>
+        </action>
+
+    </action-mappings>
+
+    <!-- ============================================================
+         Validator plug-in (declarative validation)
+         ============================================================ -->
+    <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+        <set-property property="pathnames"
+            value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+    </plug-in>
+
+</struts-config>

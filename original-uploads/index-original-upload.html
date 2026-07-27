@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Legacy Knowledge Copilot — Hackathon Pitch</title>
+<style>
+  /* ============ Reset & root ============ */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+  :root{
+    --bg-0:#070b1a;
+    --bg-1:#0e1430;
+    --bg-2:#161e44;
+    --surface:rgba(255,255,255,.04);
+    --surface-2:rgba(255,255,255,.07);
+    --border:rgba(255,255,255,.1);
+    --text:#e7ecff;
+    --text-dim:#aab2d5;
+    --text-mute:#7a83a8;
+
+    /* Agent colors */
+    --legacy:#6ee7ff;       /* cyan */
+    --legacy-bg:rgba(110,231,255,.12);
+    --knowledge:#ffd166;    /* amber */
+    --knowledge-bg:rgba(255,209,102,.13);
+    --review:#ff7eb6;       /* magenta */
+    --review-bg:rgba(255,126,182,.13);
+
+    /* Layer colors */
+    --skill:#a78bfa;
+    --skill-bg:rgba(167,139,250,.12);
+    --kbase:#22d3a8;
+    --kbase-bg:rgba(34,211,168,.12);
+
+    --danger:#ef4444;
+    --warn:#f59e0b;
+    --ok:#10b981;
+
+    --grad-primary:linear-gradient(135deg,#6ee7ff 0%,#a78bfa 50%,#ff7eb6 100%);
+    --grad-soft:linear-gradient(135deg,rgba(110,231,255,.15) 0%,rgba(167,139,250,.12) 50%,rgba(255,126,182,.15) 100%);
+    --grad-card:linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(255,255,255,.02) 100%);
+
+    --shadow-lg:0 30px 80px -30px rgba(0,0,0,.7),0 10px 30px -10px rgba(110,231,255,.12);
+    --radius:18px;
+  }
+
+  body{
+    background:radial-gradient(1200px 800px at 20% -10%,rgba(110,231,255,.12),transparent 60%),
+               radial-gradient(900px 700px at 100% 0%,rgba(255,126,182,.10),transparent 55%),
+               radial-gradient(1200px 800px at 50% 110%,rgba(167,139,250,.14),transparent 55%),
+               linear-gradient(180deg,var(--bg-0) 0%,var(--bg-1) 50%,var(--bg-0) 100%);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","SF Pro Display",Inter,Roboto,sans-serif;
+    font-feature-settings:"ss01","cv11";
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+
+  /* ============ Slide layout ============ */
+  .slide{
+    min-height:100vh;
+    width:100%;
+    scroll-snap-align:start;
+    padding:80px 6vw 80px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+    border-bottom:1px solid rgba(255,255,255,.04);
+  }
+  .slide-inner{max-width:1280px;margin:0 auto;width:100%}
+  .slide-num{
+    position:absolute;top:28px;right:36px;
+    font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--text-mute);font-weight:600;
+  }
+  .eyebrow{
+    display:inline-block;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--text-dim);font-weight:700;margin-bottom:18px;
+    padding:6px 12px;border:1px solid var(--border);border-radius:999px;
+    background:var(--surface);
+  }
+  h1,h2,h3{font-weight:800;letter-spacing:-.02em;line-height:1.05}
+  h1{font-size:clamp(2.4rem,5.5vw,5rem)}
+  h2{font-size:clamp(1.8rem,3.6vw,3.2rem);margin-bottom:18px}
+  h3{font-size:1.25rem;margin-bottom:10px}
+  p{color:var(--text-dim);line-height:1.55;font-size:1.05rem}
+  p.lead{font-size:clamp(1.05rem,1.5vw,1.35rem);max-width:900px;color:var(--text)}
+
+  .gradient-text{
+    background:var(--grad-primary);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+  }
+
+  /* ============ Cards & grids ============ */
+  .grid{display:grid;gap:22px}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:900px){
+    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  }
+
+  .card{
+    background:var(--grad-card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:26px 24px;
+    position:relative;
+    overflow:hidden;
+    transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+    backdrop-filter:blur(10px);
+  }
+  .card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.18);box-shadow:0 12px 30px -12px rgba(0,0,0,.5)}
+  .card .icon{
+    width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+    font-size:1.5rem;margin-bottom:14px;
+    background:var(--surface-2);border:1px solid var(--border);
+  }
+  .card h3{color:#fff}
+  .card p{font-size:.95rem;color:var(--text-dim)}
+
+  /* ============ Agent pills ============ */
+  .agent-pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:6px 14px;border-radius:999px;
+    font-weight:700;font-size:.85rem;
+    border:1px solid currentColor;
+  }
+  .agent-pill .dot{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 12px currentColor}
+  .pill-legacy{color:var(--legacy);background:var(--legacy-bg)}
+  .pill-knowledge{color:var(--knowledge);background:var(--knowledge-bg)}
+  .pill-review{color:var(--review);background:var(--review-bg)}
+  .pill-skill{color:var(--skill);background:var(--skill-bg)}
+  .pill-kbase{color:var(--kbase);background:var(--kbase-bg)}
+
+  /* ============ Slide 1 / hero ============ */
+  .hero{
+    text-align:center;
+    background:
+      radial-gradient(circle at 50% 30%,rgba(167,139,250,.18),transparent 50%),
+      radial-gradient(circle at 50% 80%,rgba(110,231,255,.12),transparent 50%);
+  }
+  .hero h1{margin:0 auto 22px;max-width:1100px}
+  .hero .sub{font-size:clamp(1.1rem,2vw,1.5rem);color:var(--text-dim);max-width:780px;margin:0 auto 36px;line-height:1.5}
+  .hero .badges{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:46px}
+  .badge{
+    padding:8px 16px;border-radius:999px;border:1px solid var(--border);
+    background:var(--surface);font-size:.85rem;color:var(--text-dim);font-weight:600;
+  }
+  .badge strong{color:#fff}
+
+  .hero-stats{display:flex;gap:36px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+  .stat{text-align:center}
+  .stat .num{font-size:clamp(2rem,4vw,3.5rem);font-weight:900;letter-spacing:-.04em}
+  .stat .lbl{font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-mute);margin-top:6px}
+
+  /* ============ Problem slide ============ */
+  .iceberg{
+    position:relative;height:380px;margin-top:30px;
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+  .iceberg .water{
+    position:absolute;left:0;right:0;top:38%;height:62%;
+    background:linear-gradient(180deg,rgba(110,231,255,.08) 0%,rgba(8,12,30,.6) 100%);
+    border-top:1px dashed rgba(110,231,255,.3);
+  }
+  .iceberg .top-tip,.iceberg .bottom-mass{
+    background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+    border:1px solid var(--border);position:relative;
+  }
+  .iceberg .top-tip{
+    width:120px;height:90px;clip-path:polygon(50% 0%,100% 100%,0 100%);
+    background:linear-gradient(180deg,#fff,#aab2d5);
+  }
+  .iceberg .bottom-mass{
+    position:absolute;top:38%;width:420px;height:60%;
+    clip-path:polygon(20% 0%,80% 0%,100% 50%,90% 100%,10% 100%,0 50%);
+    background:linear-gradient(180deg,#3a4282,#161e44);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    text-align:center;padding:20px;
+  }
+  .iceberg .bottom-mass .label{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:6px}
+  .iceberg .bottom-mass .sub{font-size:.85rem;color:var(--text-dim);max-width:280px}
+  .iceberg-label{position:absolute;color:var(--text-mute);font-size:.85rem;font-weight:600}
+
+  /* ============ Diagram primitives ============ */
+  .arch-stage{
+    background:rgba(7,11,26,.55);
+    border:1px solid var(--border);border-radius:24px;
+    padding:38px 30px;margin-top:22px;
+    backdrop-filter:blur(8px);
+  }
+  .lane{
+    display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin-bottom:24px;
+  }
+  .node{
+    padding:18px 22px;border-radius:14px;border:1px solid currentColor;
+    min-width:200px;text-align:center;background:var(--surface);font-weight:700;
+    position:relative;transition:transform .25s ease;
+  }
+  .node:hover{transform:translateY(-3px)}
+  .node .role{display:block;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;opacity:.8;margin-bottom:6px}
+  .node .name{display:block;font-size:1rem;color:#fff}
+  .node.legacy{color:var(--legacy);background:var(--legacy-bg)}
+  .node.knowledge{color:var(--knowledge);background:var(--knowledge-bg)}
+  .node.review{color:var(--review);background:var(--review-bg)}
+  .node.user{color:#fff;background:var(--surface-2);border-color:var(--border)}
+  .node.router{
+    color:#fff;background:linear-gradient(135deg,rgba(110,231,255,.15),rgba(167,139,250,.15),rgba(255,126,182,.15));
+    border-color:rgba(255,255,255,.25);
+  }
+  .node.skill{color:var(--skill);background:var(--skill-bg)}
+  .node.kbase{color:var(--kbase);background:var(--kbase-bg);min-width:280px}
+
+  .arrow-down{
+    width:2px;height:38px;margin:0 auto;
+    background:linear-gradient(180deg,transparent,rgba(255,255,255,.35),transparent);
+    position:relative;
+  }
+  .arrow-down::after{
+    content:"";position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);
+    width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;
+    border-top:8px solid rgba(255,255,255,.45);
+  }
+
+  .three-fan{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 auto;max-width:900px;
+  }
+  @media (max-width:780px){.three-fan{grid-template-columns:1fr}}
+
+  /* ============ Flow diagram (horizontal) ============ */
+  .flow-h{
+    display:flex;align-items:center;gap:14px;justify-content:center;
+    flex-wrap:wrap;margin-top:22px;
+  }
+  .flow-h .step{
+    padding:18px 22px;border-radius:14px;border:1px solid var(--border);
+    background:var(--surface);min-width:180px;text-align:center;
+  }
+  .flow-h .step .step-n{font-size:.7rem;letter-spacing:.18em;color:var(--text-mute);font-weight:700;margin-bottom:6px}
+  .flow-h .step .step-t{font-weight:800;color:#fff;font-size:1rem}
+  .flow-h .step .step-d{font-size:.82rem;color:var(--text-dim);margin-top:6px}
+  .flow-h .arrow-r{
+    font-size:1.4rem;color:var(--text-mute);
+  }
+
+  /* ============ Comparison table ============ */
+  .compare{
+    display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px;
+  }
+  @media (max-width:900px){.compare{grid-template-columns:1fr}}
+  .compare .col{
+    background:var(--grad-card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:24px;
+  }
+  .compare .col.before{border-left:3px solid var(--danger)}
+  .compare .col.after{border-left:3px solid var(--ok)}
+  .compare h3{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .compare ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .compare li{
+    color:var(--text-dim);font-size:.95rem;line-height:1.5;
+    padding-left:22px;position:relative;
+  }
+  .compare .before li::before{content:"✕";position:absolute;left:0;color:var(--danger);font-weight:700}
+  .compare .after li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:700}
+
+  /* ============ Skills grid (slide 5/8) ============ */
+  .skills-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+  @media (max-width:1000px){.skills-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:560px){.skills-grid{grid-template-columns:1fr}}
+  .skill-card{
+    background:var(--skill-bg);border:1px solid rgba(167,139,250,.3);
+    border-radius:14px;padding:18px;
+  }
+  .skill-card .ico{font-size:1.4rem;margin-bottom:8px}
+  .skill-card .name{font-weight:800;color:#fff;font-size:.95rem;margin-bottom:4px}
+  .skill-card .agent{font-size:.72rem;color:var(--skill);letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+
+  /* ============ Knowledge grounding model ============ */
+  .grounding-model{
+    display:grid;grid-template-columns:1fr 80px 1fr;align-items:center;gap:24px;margin-top:24px;
+  }
+  @media (max-width:900px){.grounding-model{grid-template-columns:1fr;gap:14px}}
+  .sources{display:flex;flex-direction:column;gap:12px}
+  .source{
+    display:flex;align-items:center;gap:14px;
+    padding:14px 16px;border-radius:12px;background:var(--surface);border:1px solid var(--border);
+  }
+  .source .ico{
+    width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+    border-radius:10px;background:var(--kbase-bg);color:var(--kbase);font-size:1.2rem;
+    border:1px solid currentColor;
+  }
+  .source .info{flex:1}
+  .source .name{font-weight:800;color:#fff;font-size:.92rem}
+  .source .meta{font-size:.75rem;color:var(--text-mute);margin-top:2px}
+  .converge{
+    height:200px;position:relative;display:flex;align-items:center;justify-content:center;
+  }
+  .converge::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at center,rgba(34,211,168,.3),transparent 65%);
+    filter:blur(10px);
+  }
+  .converge .core{
+    width:64px;height:64px;border-radius:50%;
+    background:var(--grad-primary);
+    display:flex;align-items:center;justify-content:center;font-size:1.6rem;
+    box-shadow:0 0 40px rgba(167,139,250,.5);position:relative;z-index:1;
+  }
+  .output-card{
+    background:var(--grad-card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:24px;
+  }
+  .output-card .label{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-mute);margin-bottom:10px}
+  .output-card pre{
+    background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:10px;padding:14px;
+    font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.82rem;line-height:1.55;
+    color:#cdd5ff;overflow-x:auto;
+  }
+  .output-card .tag{
+    display:inline-block;padding:3px 8px;border-radius:6px;font-weight:700;font-size:.7rem;
+    letter-spacing:.08em;text-transform:uppercase;margin-right:6px;
+  }
+  .tag-grounded{background:rgba(16,185,129,.18);color:#34d399;border:1px solid #34d399}
+  .tag-partial{background:rgba(245,158,11,.18);color:#fbbf24;border:1px solid #fbbf24}
+  .tag-inferred{background:rgba(239,68,68,.18);color:#f87171;border:1px solid #f87171}
+  .citation{
+    display:inline-block;padding:2px 8px;border-radius:6px;background:var(--kbase-bg);color:var(--kbase);
+    font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.78rem;border:1px solid currentColor;
+  }
+
+  /* ============ Demo flow steps ============ */
+  .demo-flow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:24px}
+  @media (max-width:900px){.demo-flow{grid-template-columns:1fr}}
+  .demo-card{
+    background:var(--grad-card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:24px;position:relative;overflow:hidden;
+  }
+  .demo-card .number{
+    position:absolute;top:14px;right:18px;font-size:3rem;font-weight:900;
+    color:rgba(255,255,255,.06);letter-spacing:-.04em;line-height:1;
+  }
+  .demo-card .tag-line{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .demo-card h3{margin-bottom:14px;font-size:1.15rem}
+  .demo-card .prompt-box{
+    background:rgba(0,0,0,.45);border:1px solid var(--border);border-radius:10px;
+    padding:12px;font-family:"SF Mono",Menlo,Consolas,monospace;
+    font-size:.78rem;line-height:1.55;color:#cdd5ff;margin:14px 0;
+    border-left:3px solid var(--legacy);
+  }
+  .demo-card.review-card .prompt-box{border-left-color:var(--review)}
+  .demo-card .watch-for{font-size:.85rem;color:var(--text-dim);margin-top:10px}
+  .demo-card .watch-for strong{color:#fff;display:block;margin-bottom:6px;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase}
+  .demo-card .findings{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .finding{padding:6px 10px;border-radius:6px;font-size:.82rem;display:flex;align-items:center;gap:8px}
+  .finding.blocker{background:rgba(239,68,68,.12);color:#fca5a5;border-left:3px solid var(--danger)}
+  .finding.major{background:rgba(245,158,11,.12);color:#fcd34d;border-left:3px solid var(--warn)}
+  .finding.ok{background:rgba(16,185,129,.12);color:#6ee7b7;border-left:3px solid var(--ok)}
+
+  /* ============ Roadmap ============ */
+  .roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:30px}
+  @media (max-width:900px){.roadmap{grid-template-columns:1fr}}
+  .road-col{
+    background:var(--grad-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;
+    position:relative;
+  }
+  .road-col .when{
+    display:inline-block;padding:5px 12px;border-radius:999px;font-size:.72rem;letter-spacing:.16em;
+    text-transform:uppercase;font-weight:800;margin-bottom:16px;
+  }
+  .road-col.now .when{background:var(--ok);color:#022c1f}
+  .road-col.next .when{background:var(--legacy);color:#013040}
+  .road-col.beyond .when{background:var(--review);color:#3a0a25}
+  .road-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .road-col li{font-size:.92rem;color:var(--text-dim);line-height:1.5;padding-left:22px;position:relative}
+  .road-col li::before{content:"›";position:absolute;left:6px;color:currentColor;font-weight:700;color:var(--text-mute)}
+
+  /* ============ Closing slide ============ */
+  .closing{text-align:center}
+  .closing h1{margin:0 auto 30px;max-width:1100px}
+  .closing .tagline{
+    font-size:clamp(1.3rem,2.4vw,1.8rem);color:var(--text);font-weight:600;font-style:italic;
+    max-width:900px;margin:0 auto 40px;line-height:1.4;
+  }
+  .closing .cta{
+    display:inline-flex;align-items:center;gap:12px;
+    padding:16px 28px;border-radius:14px;font-weight:800;
+    background:var(--grad-primary);color:#0a0e23;text-decoration:none;
+    box-shadow:0 14px 40px -10px rgba(110,231,255,.4);
+    transition:transform .2s ease;
+  }
+  .closing .cta:hover{transform:translateY(-2px)}
+
+  /* ============ Navigation ============ */
+  .nav-dots{
+    position:fixed;right:24px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:10px;z-index:100;
+  }
+  .nav-dots a{
+    width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.18);
+    border:1px solid transparent;transition:all .2s ease;
+    display:block;
+  }
+  .nav-dots a:hover{background:rgba(255,255,255,.5)}
+  .nav-dots a.active{background:var(--legacy);box-shadow:0 0 12px var(--legacy);transform:scale(1.4)}
+  .nav-arrows{
+    position:fixed;bottom:24px;right:24px;display:flex;gap:10px;z-index:100;
+  }
+  .nav-arrows button{
+    width:44px;height:44px;border-radius:12px;border:1px solid var(--border);
+    background:rgba(7,11,26,.7);color:#fff;font-size:1.2rem;cursor:pointer;
+    backdrop-filter:blur(10px);transition:background .2s ease;
+  }
+  .nav-arrows button:hover{background:rgba(255,255,255,.1)}
+  .progress{
+    position:fixed;top:0;left:0;height:3px;background:var(--grad-primary);
+    z-index:101;transition:width .2s ease;width:0%;
+  }
+  @media (max-width:700px){
+    .nav-dots{display:none}
+  }
+
+  /* ============ Animations ============ */
+  @keyframes fadeInUp{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  @keyframes glow{
+    0%,100%{box-shadow:0 0 18px rgba(167,139,250,.3)}
+    50%{box-shadow:0 0 36px rgba(167,139,250,.6)}
+  }
+  .slide.active .slide-inner > *{
+    animation:fadeInUp .7s ease both;
+  }
+  .slide.active .slide-inner > *:nth-child(2){animation-delay:.08s}
+  .slide.active .slide-inner > *:nth-child(3){animation-delay:.16s}
+  .slide.active .slide-inner > *:nth-child(4){animation-delay:.24s}
+  .slide.active .slide-inner > *:nth-child(5){animation-delay:.32s}
+
+  /* Highlights */
+  .highlight{
+    background:linear-gradient(120deg,rgba(110,231,255,.0) 0%,rgba(110,231,255,.25) 50%,rgba(110,231,255,.0) 100%);
+    padding:2px 6px;border-radius:4px;color:#fff;font-weight:700;
+  }
+  .keyword{color:var(--legacy);font-weight:700}
+  .keyword-2{color:var(--knowledge);font-weight:700}
+  .keyword-3{color:var(--review);font-weight:700}
+
+  /* Small utilities */
+  .center{text-align:center}
+  .mt-l{margin-top:30px}
+  .mt-xl{margin-top:46px}
+  .mb-m{margin-bottom:20px}
+  hr.div{border:none;border-top:1px solid var(--border);margin:30px 0}
+  .small{font-size:.85rem;color:var(--text-mute)}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<!-- ============ SLIDE 1 — TITLE ============ -->
+<section class="slide hero" id="s1">
+  <span class="slide-num">01 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">Hackathon Pitch · 4-minute demo</span>
+    <h1>Legacy Knowledge <span class="gradient-text">Copilot</span></h1>
+    <p class="sub">
+      The AI that finally understands your <strong>COBOL</strong>,
+      your <strong>Struts 1</strong>, and your <strong>retiring SMEs</strong>.
+    </p>
+    <div class="badges">
+      <span class="badge"><strong>Multi-agent</strong> · 3 specialized agents</span>
+      <span class="badge"><strong>Grounded</strong> · 100% citable</span>
+      <span class="badge"><strong>Zero infra</strong> · runs in VS Code</span>
+      <span class="badge">Built on <strong>awesome-copilot</strong> conventions</span>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="num gradient-text">3</div><div class="lbl">Specialized Agents</div></div>
+      <div class="stat"><div class="num gradient-text">8</div><div class="lbl">Reusable Skills</div></div>
+      <div class="stat"><div class="num gradient-text">100%</div><div class="lbl">Grounded Answers</div></div>
+      <div class="stat"><div class="num gradient-text">0%</div><div class="lbl">Hallucinations*</div></div>
+    </div>
+    <p class="small mt-l">*on every grounded claim — confidence-labeled `grounded | partial | inferred`.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2 — PROBLEM ============ -->
+<section class="slide" id="s2">
+  <span class="slide-num">02 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">The Problem</span>
+    <h2>The legacy iceberg</h2>
+    <p class="lead">Enterprise engineering is sitting on a generational cliff. The code keeps running, but the knowledge is walking out the door.</p>
+
+    <div class="grid grid-4 mt-l">
+      <div class="card">
+        <div class="icon">📜</div>
+        <h3 class="gradient-text">220B+</h3>
+        <p>lines of <strong>COBOL</strong> still run payments, claims, benefits, tax.</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚠️</div>
+        <h3 class="gradient-text">65%+</h3>
+        <p>of large enterprises depend on a <strong>Struts 1.x</strong> app past end-of-life.</p>
+      </div>
+      <div class="card">
+        <div class="icon">👴</div>
+        <h3 class="gradient-text">55+</h3>
+        <p>median age of a working COBOL engineer. SMEs retire faster than they're replaced.</p>
+      </div>
+      <div class="card">
+        <div class="icon">💥</div>
+        <h3 class="gradient-text">$40M</h3>
+        <p>nightly batch run a 5-line change can blow up. Documentation is missing, stale, or contradictory.</p>
+      </div>
+    </div>
+
+    <div class="iceberg mt-xl">
+      <div class="water"></div>
+      <div class="top-tip"></div>
+      <div class="bottom-mass">
+        <div class="label">What runs the business</div>
+        <div class="sub">COBOL · Struts 1 · JCL · stored procs · tribal knowledge in retiring engineers' heads</div>
+      </div>
+      <span class="iceberg-label" style="top:5%;left:50%;transform:translateX(-50%)">What's documented</span>
+      <span class="iceberg-label" style="bottom:8%;left:50%;transform:translateX(-50%);color:var(--text-dim)">↑ visible · ↓ invisible</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3 — WHY GENERIC AI FAILS ============ -->
+<section class="slide" id="s3">
+  <span class="slide-num">03 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">Why It Matters</span>
+    <h2>"Just use Copilot" — but Copilot wasn't trained on <span class="gradient-text">your</span> legacy</h2>
+    <p class="lead">Generic AI gives a confident, plausible answer. Compliance can't approve "plausible."</p>
+
+    <div class="grid grid-2 mt-l">
+      <div class="card" style="border-left:3px solid var(--danger)">
+        <div class="icon" style="background:rgba(239,68,68,.15);color:var(--danger)">🤖</div>
+        <h3>Generic AI</h3>
+        <p style="margin-bottom:12px"><strong>Trained on GitHub.</strong> GitHub doesn't have your COBOL, your Slack threads from 2014, or your retired-SME interviews.</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:14px">
+          <li style="padding-left:22px;position:relative;color:var(--text-dim);font-size:.95rem">
+            <span style="position:absolute;left:0;color:var(--danger);font-weight:700">✕</span> Invents plausible-sounding answers
+          </li>
+          <li style="padding-left:22px;position:relative;color:var(--text-dim);font-size:.95rem">
+            <span style="position:absolute;left:0;color:var(--danger);font-weight:700">✕</span> Doesn't know your "do not touch" invariants
+          </li>
+          <li style="padding-left:22px;position:relative;color:var(--text-dim);font-size:.95rem">
+            <span style="position:absolute;left:0;color:var(--danger);font-weight:700">✕</span> No citations, no audit trail
+          </li>
+          <li style="padding-left:22px;position:relative;color:var(--text-dim);font-size:.95rem">
+            <span style="position:absolute;left:0;color:var(--danger);font-weight:700">✕</span> Treats legacy like any other code — but it isn't
+          </li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:3px solid var(--ok)">
+        <div class="icon" style="background:rgba(16,185,129,.15);color:var(--ok)">🎯</div>
+        <h3>Legacy Knowledge Copilot</h3>
+        <p style="margin-bottom:12px"><strong>Trained for legacy.</strong> Reads your COBOL, grounds in your tribal knowledge, respects your invariants.</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:14px">
+          <li style="padding-left:22px;position:relative;color:var(--text-dim);font-size:.95rem">
+            <span style="position:absolute;left:0;color:var(--ok);font-weight:700">✓</span> Cites every grounded claim
+          </li>
+          <li style="padding-left:22px;position:relative;color:var(--text-dim);font-size:.95rem">
+            <span style="position:absolute;left:0;color:var(--ok);font-weight:700">✓</span> Veto rules on do-not-touch invariants
+          </li>
+          <li style="padding-left:22px;position:relative;color:var(--text-dim);font-size:.95rem">
+            <span style="position:absolute;left:0;color:var(--ok);font-weight:700">✓</span> Confidence label on every answer
+          </li>
+          <li style="padding-left:22px;position:relative;color:var(--text-dim);font-size:.95rem">
+            <span style="position:absolute;left:0;color:var(--ok);font-weight:700">✓</span> <span class="highlight">Auditable, not just autocomplete</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4 — SOLUTION ============ -->
+<section class="slide" id="s4">
+  <span class="slide-num">04 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">The Solution</span>
+    <h2>A multi-agent AI assistant <span class="gradient-text">purpose-built for legacy</span></h2>
+    <p class="lead">Turn impenetrable legacy code + a retiring SME's notebook into reviewable, citable, change-ready insight — inside VS Code.</p>
+
+    <div class="grid grid-3 mt-l">
+      <div class="card">
+        <div class="icon" style="color:var(--legacy);background:var(--legacy-bg)">📖</div>
+        <h3>Reads</h3>
+        <p>COBOL, JCL, copybooks, Struts 1, JSPs, non-normalized SQL Server, T-SQL stored procs.</p>
+      </div>
+      <div class="card">
+        <div class="icon" style="color:var(--knowledge);background:var(--knowledge-bg)">🔗</div>
+        <h3>Grounds</h3>
+        <p>Every answer cited to <code>/knowledge</code> — tribal docs, runbooks, technical papers, design docs.</p>
+      </div>
+      <div class="card">
+        <div class="icon" style="color:var(--review);background:var(--review-bg)">🛡️</div>
+        <h3>Reviews</h3>
+        <p>Legacy-aware risk lens. Distinguishes <em>"bad code"</em> from <em>"load-bearing code."</em></p>
+      </div>
+      <div class="card">
+        <div class="icon" style="color:var(--skill);background:var(--skill-bg)">🧭</div>
+        <h3>Plans</h3>
+        <p>Strangler-fig seams, characterization tests, phased rollouts. Never big-bang rewrites.</p>
+      </div>
+      <div class="card">
+        <div class="icon" style="color:var(--kbase);background:var(--kbase-bg)">📎</div>
+        <h3>Cites</h3>
+        <p>Every claim linked. Every answer labeled <span class="tag tag-grounded">grounded</span> · <span class="tag tag-partial">partial</span> · <span class="tag tag-inferred">inferred</span>.</p>
+      </div>
+      <div class="card" style="background:var(--grad-soft);border-color:rgba(167,139,250,.3)">
+        <div class="icon">✨</div>
+        <h3>One sentence</h3>
+        <p style="color:var(--text)">"<em>Legacy isn't bad code. It's <strong>load-bearing</strong> code. We make it readable, reviewable, and ready for the next 20 years.</em>"</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 5 — HOW IT WORKS ============ -->
+<section class="slide" id="s5">
+  <span class="slide-num">05 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">How It Works</span>
+    <h2>Three agents · Eight skills · One knowledge base</h2>
+    <p class="lead">Specialized agents that compose. Deterministic routing. Reusable skills. A grounded knowledge base.</p>
+
+    <div class="grid grid-3 mt-l">
+      <div class="card" style="border-top:3px solid var(--legacy)">
+        <span class="agent-pill pill-legacy"><span class="dot"></span>@legacy-code</span>
+        <h3 class="mt-l">LegacyCodeAgent</h3>
+        <p>Reads &amp; explains legacy source. Builds division maps, control-flow diagrams, modern analogies. Comprehension-only — never editorializes.</p>
+        <div class="small" style="margin-top:14px"><strong>Boundary:</strong> doesn't score quality. Delegates to <code>@review</code>.</div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--knowledge)">
+        <span class="agent-pill pill-knowledge"><span class="dot"></span>@knowledge</span>
+        <h3 class="mt-l">KnowledgeAgent</h3>
+        <p>Grounds answers in tribal docs, runbooks, SME interviews. Cites every claim. Refuses to fabricate when no source exists.</p>
+        <div class="small" style="margin-top:14px"><strong>Boundary:</strong> never asserts a fact without a citation.</div>
+      </div>
+      <div class="card" style="border-top:3px solid var(--review)">
+        <span class="agent-pill pill-review"><span class="dot"></span>@review</span>
+        <h3 class="mt-l">ReviewAgent</h3>
+        <p>Legacy-aware code review. Scores modernization by value × blast-radius × effort. <strong>Veto authority</strong> on do-not-touch.</p>
+        <div class="small" style="margin-top:14px"><strong>Boundary:</strong> delegates explanation to <code>@legacy-code</code>.</div>
+      </div>
+    </div>
+
+    <div class="skills-grid mt-xl">
+      <div class="skill-card"><div class="ico">📖</div><div class="name">Legacy Code Explanation</div><div class="agent">@legacy-code</div></div>
+      <div class="skill-card"><div class="ico">📜</div><div class="name">COBOL Flow Analysis</div><div class="agent">@legacy-code</div></div>
+      <div class="skill-card"><div class="ico">🕸️</div><div class="name">Struts 1 Lifecycle</div><div class="agent">@legacy-code</div></div>
+      <div class="skill-card"><div class="ico">⚙️</div><div class="name">Batch Job Analysis</div><div class="agent">@legacy-code · @review</div></div>
+      <div class="skill-card"><div class="ico">🗄️</div><div class="name">SQL Server Schema</div><div class="agent">@legacy-code · @review</div></div>
+      <div class="skill-card"><div class="ico">✅</div><div class="name">Code Review (Legacy)</div><div class="agent">@review</div></div>
+      <div class="skill-card"><div class="ico">🔗</div><div class="name">Knowledge Grounding</div><div class="agent">@knowledge · all</div></div>
+      <div class="skill-card"><div class="ico">🚀</div><div class="name">Modernization</div><div class="agent">@review</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6 — ARCHITECTURE ============ -->
+<section class="slide" id="s6">
+  <span class="slide-num">06 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">Architecture</span>
+    <h2>Multi-agent · grounded · in VS Code</h2>
+    <p class="lead">Zero new infrastructure. Just VS Code + Copilot Chat + the agent / skill / knowledge layers as drop-in files.</p>
+
+    <div class="arch-stage">
+      <!-- Row 1: Developer -->
+      <div class="lane">
+        <div class="node user">
+          <span class="role">User</span>
+          <span class="name">👨‍💻 Developer in VS Code</span>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <!-- Row 2: Copilot Chat -->
+      <div class="lane">
+        <div class="node user">
+          <span class="role">Surface</span>
+          <span class="name">💬 Copilot Chat</span>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <!-- Row 3: Router -->
+      <div class="lane">
+        <div class="node router" style="animation:glow 3s ease-in-out infinite">
+          <span class="role">Deterministic</span>
+          <span class="name">🧭 Agent Router</span>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <!-- Row 4: Three agents -->
+      <div class="three-fan">
+        <div class="node legacy">
+          <span class="role">Comprehension</span>
+          <span class="name">@legacy-code</span>
+        </div>
+        <div class="node knowledge">
+          <span class="role">Grounding</span>
+          <span class="name">@knowledge</span>
+        </div>
+        <div class="node review">
+          <span class="role">Risk &amp; Modernization</span>
+          <span class="name">@review</span>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <!-- Row 5: Skills -->
+      <div class="lane">
+        <div class="node skill" style="min-width:380px">
+          <span class="role">Reusable capabilities</span>
+          <span class="name">🧩 8 Composable Skills</span>
+        </div>
+      </div>
+      <div class="arrow-down"></div>
+
+      <!-- Row 6: Knowledge base + code -->
+      <div class="lane">
+        <div class="node kbase">
+          <span class="role">Grounding sources</span>
+          <span class="name">📚 /knowledge<br/><span style="font-size:.78rem;opacity:.85">tribal · runbooks · papers · do-not-touch</span></span>
+        </div>
+        <div class="node user" style="min-width:240px">
+          <span class="role">Behavioral truth</span>
+          <span class="name">📂 Repo source<br/><span style="font-size:.78rem;opacity:.75">COBOL · Struts · T-SQL · JCL</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-3 mt-l">
+      <div class="card"><div class="icon">🪶</div><h3>Zero infra</h3><p>Install VS Code + Copilot. Clone the repo. Done.</p></div>
+      <div class="card"><div class="icon">🧩</div><h3>Composable</h3><p>New stacks (DB2, CICS, SSIS) = folder + skill. No code changes.</p></div>
+      <div class="card"><div class="icon">🛑</div><h3>Safe by default</h3><p>Behavior preservation + do-not-touch veto rule.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7 — DEMO FLOW ============ -->
+<section class="slide" id="s7">
+  <span class="slide-num">07 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">Demo Flow · 3 minutes · 3 demos</span>
+    <h2>From mystery code to <span class="gradient-text">grounded insight</span> in seconds</h2>
+    <p class="lead">Same workspace. Same Copilot Chat. Three agents, three different jobs.</p>
+
+    <div class="flow-h mt-l">
+      <div class="step">
+        <div class="step-n">Step 1</div>
+        <div class="step-t">📂 Code Input</div>
+        <div class="step-d">Open a legacy artifact: COBOL, Struts, SQL</div>
+      </div>
+      <div class="arrow-r">→</div>
+      <div class="step">
+        <div class="step-n">Step 2</div>
+        <div class="step-t">🤖 Agent Routing</div>
+        <div class="step-d">Deterministic rules pick @legacy-code · @knowledge · @review</div>
+      </div>
+      <div class="arrow-r">→</div>
+      <div class="step">
+        <div class="step-n">Step 3</div>
+        <div class="step-t">🔍 Analysis</div>
+        <div class="step-d">Skills extract structure, flow, risk, citations</div>
+      </div>
+      <div class="arrow-r">→</div>
+      <div class="step">
+        <div class="step-n">Step 4</div>
+        <div class="step-t">📚 Enrichment</div>
+        <div class="step-d">/knowledge grounding adds intent, history, invariants</div>
+      </div>
+      <div class="arrow-r">→</div>
+      <div class="step">
+        <div class="step-n">Step 5</div>
+        <div class="step-t">✨ Insights</div>
+        <div class="step-d">Cited answer · confidence label · gap callouts</div>
+      </div>
+    </div>
+
+    <div class="demo-flow">
+      <!-- DEMO 1 -->
+      <div class="demo-card">
+        <div class="number">1</div>
+        <div class="tag-line">
+          <span class="agent-pill pill-legacy"><span class="dot"></span>@legacy-code</span>
+          <span class="agent-pill pill-knowledge"><span class="dot"></span>+ grounding</span>
+        </div>
+        <h3>Explain a 28-year-old COBOL batch</h3>
+        <p style="font-size:.92rem">A nightly billing batch nobody on the team has read. One prompt.</p>
+        <div class="prompt-box">@legacy-code Explain examples/cobol/NB_POST.CBL end-to-end.
+Pull tribal context for magic codes ('A','R','H','Z9').
+Cite every grounded claim.</div>
+        <div class="watch-for">
+          <strong>Watch For</strong>
+          • Division map + control-flow diagram<br/>
+          • Magic-code table where <code>Z9</code> is <span class="citation">[knowledge/tribal/…#rule]</span><br/>
+          • <span class="tag tag-grounded">grounded</span> confidence + Gaps section
+        </div>
+      </div>
+
+      <!-- DEMO 2 -->
+      <div class="demo-card review-card">
+        <div class="number">2</div>
+        <div class="tag-line">
+          <span class="agent-pill pill-review"><span class="dot"></span>@review</span>
+          <span class="agent-pill pill-knowledge"><span class="dot"></span>+ do-not-touch check</span>
+        </div>
+        <h3>Catch cross-layer risk before it ships</h3>
+        <p style="font-size:.92rem">Struts Action + the stored proc it calls. Backward-compat with the COBOL batch.</p>
+        <div class="prompt-box">@review Review ApproveClaimAction.java and the SP it calls.
+Lenses: security, correctness, backward-compat with NB_POST_NIGHTLY.
+Honor /knowledge/do-not-touch.</div>
+        <div class="findings">
+          <div class="finding blocker">🛑 <strong>blocker</strong> · SQL injection</div>
+          <div class="finding blocker">🛑 <strong>blocker</strong> · Hard-coded credentials</div>
+          <div class="finding major">⚠️ <strong>major</strong> · No transaction boundary</div>
+          <div class="finding ok">✓ <strong>Z9 invariant</strong> respected</div>
+        </div>
+      </div>
+
+      <!-- DEMO 3 -->
+      <div class="demo-card">
+        <div class="number">3</div>
+        <div class="tag-line">
+          <span class="agent-pill pill-legacy"><span class="dot"></span>@legacy-code</span>
+        </div>
+        <h3>Make sense of a non-normalized schema</h3>
+        <p style="font-size:.92rem">Wide tables. No FKs. Magic codes. Bitfields in CHAR columns. Classic.</p>
+        <div class="prompt-box">@legacy-code Analyze examples/sql/schema.sql.
+Focus on BILLING.CLAIM: column dictionary, implicit FKs,
+overloaded ROUTING_FLAGS, ranked normalization plan.</div>
+        <div class="watch-for">
+          <strong>Watch For</strong>
+          • <strong>Inferred foreign keys</strong> the DBA never declared<br/>
+          • <code>ROUTING_FLAGS</code> bitfield decoded<br/>
+          • <strong>Value × blast-radius</strong> normalization roadmap
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8 — KEY FEATURES ============ -->
+<section class="slide" id="s8">
+  <span class="slide-num">08 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">Key Features</span>
+    <h2>Five things make this <span class="gradient-text">different</span></h2>
+
+    <div class="grid grid-3 mt-l">
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>Built for legacy</h3>
+        <p>Not a generic "explain my code" tool. Calibrated for COBOL idioms, Struts 1 quirks, T-SQL pathologies, batch blast radius.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📎</div>
+        <h3>Cited, not invented</h3>
+        <p>Every claim links back to <code>/knowledge</code>. <span class="tag tag-grounded">grounded</span> · <span class="tag tag-partial">partial</span> · <span class="tag tag-inferred">inferred</span> labels on every answer.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🛑</div>
+        <h3>Veto rules</h3>
+        <p><code>do-not-touch</code> invariants are honored, not ignored. The agent literally cannot recommend a violation without a documented mitigation.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧩</div>
+        <h3>Composable</h3>
+        <p>New stacks (DB2, CICS, SSIS, Informatica) = drop in a knowledge folder and a skill. Pattern documented.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🪶</div>
+        <h3>Zero infra</h3>
+        <p>VS Code + Copilot Chat. No new platform to deploy. No new bills to pay. Ship today.</p>
+      </div>
+      <div class="card" style="background:var(--grad-soft);border-color:rgba(167,139,250,.3)">
+        <div class="icon">🔄</div>
+        <h3>Knowledge flywheel</h3>
+        <p>Every <strong>Gap</strong> the assistant reports becomes a knowledge file — which grounds the next answer.</p>
+      </div>
+    </div>
+
+    <hr class="div" />
+
+    <h2 style="font-size:1.6rem;margin-top:30px">Before vs. After</h2>
+    <div class="compare">
+      <div class="col before">
+        <h3>🛑 Before</h3>
+        <ul>
+          <li>Senior SME bottleneck on every change</li>
+          <li>Documentation rot — Confluence graveyards</li>
+          <li>"Don't touch it — nobody knows what it does"</li>
+          <li>Big-bang rewrites that fail</li>
+          <li>Onboard to legacy module in <strong>weeks</strong></li>
+          <li>Find blast-radius bug at <strong>2 AM in prod</strong></li>
+        </ul>
+      </div>
+      <div class="col after">
+        <h3>✨ After</h3>
+        <ul>
+          <li>Self-serve grounded answers, cited to SME notes</li>
+          <li>Knowledge promoted on every Gap</li>
+          <li>Cited explanations + risk-scored changes</li>
+          <li>Strangler-fig plans that ship incrementally</li>
+          <li>Onboard to legacy module in <strong>minutes</strong></li>
+          <li>Catch blast-radius bug at <strong>PR time</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9 — GROUNDING ============ -->
+<section class="slide" id="s9">
+  <span class="slide-num">09 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">Knowledge Grounding</span>
+    <h2>Tribal knowledge becomes a <span class="gradient-text">queryable asset</span></h2>
+    <p class="lead">Every grounded claim is cited. Every answer is labeled. Every gap is surfaced.</p>
+
+    <div class="grounding-model">
+      <!-- Knowledge sources -->
+      <div class="sources">
+        <div class="source">
+          <div class="ico">🗣️</div>
+          <div class="info">
+            <div class="name">Tribal knowledge</div>
+            <div class="meta">SME interviews · oral history · undocumented rules</div>
+          </div>
+        </div>
+        <div class="source">
+          <div class="ico">📘</div>
+          <div class="info">
+            <div class="name">Technical papers</div>
+            <div class="meta">Struts 1 · COBOL · SQL Server background</div>
+          </div>
+        </div>
+        <div class="source">
+          <div class="ico">🛠️</div>
+          <div class="info">
+            <div class="name">Runbooks</div>
+            <div class="meta">Operational procedures · incident playbooks</div>
+          </div>
+        </div>
+        <div class="source">
+          <div class="ico">📐</div>
+          <div class="info">
+            <div class="name">Design docs</div>
+            <div class="meta">Original/legacy design intent</div>
+          </div>
+        </div>
+        <div class="source" style="border-color:var(--review);background:var(--review-bg)">
+          <div class="ico" style="background:var(--review-bg);color:var(--review)">🛑</div>
+          <div class="info">
+            <div class="name">do-not-touch invariants</div>
+            <div class="meta">Veto rules · enforced by @review</div>
+          </div>
+        </div>
+        <div class="source">
+          <div class="ico">📂</div>
+          <div class="info">
+            <div class="name">Codebase</div>
+            <div class="meta">COBOL · Struts · T-SQL · fallback behavioral truth</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Converge -->
+      <div class="converge">
+        <div class="core">→</div>
+      </div>
+
+      <!-- Output example -->
+      <div class="output-card">
+        <div class="label">Grounded Answer · Auditable Output</div>
+        <pre>
+<span style="color:var(--legacy)">## Magic Status Codes</span>
+
+| Code | Meaning              | Source       |
+|------|----------------------|--------------|
+| A    | Approved             | inferred     |
+| R    | Rejected             | inferred     |
+| H    | Hold (standard)      | inferred     |
+| <span style="color:var(--review)">Z9</span>   | <span style="color:var(--review)">Special hold — legal review</span> | <span style="color:var(--kbase)">cited ↓</span> |
+
+<span class="citation">[knowledge/tribal/nb-post-z9-special-hold.md#rule]</span>
+
+<span style="color:#34d399">Confidence:</span> <span class="tag tag-grounded">grounded</span>
+
+<span style="color:#fbbf24">Gaps:</span>
+• No characterization test for Z9 branch
+• SME interview re: 'H' vs 'Z9' boundary
+</pre>
+      </div>
+    </div>
+
+    <hr class="div" />
+
+    <div class="grid grid-3">
+      <div class="card">
+        <h3 style="color:var(--ok)">✓ grounded</h3>
+        <p>Fully cited. Every claim links to a source. Compliance can audit.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--warn)">~ partial</h3>
+        <p>Some citations, some inference. Mixed evidence — read carefully.</p>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--danger)">! inferred</h3>
+        <p>No source. Treated as a hypothesis. <strong>Gaps</strong> section tells you what to write.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10 — USE CASES ============ -->
+<section class="slide" id="s10">
+  <span class="slide-num">10 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">Example Use Cases</span>
+    <h2>Five workflows on day one</h2>
+
+    <div class="grid grid-2 mt-l">
+      <div class="card">
+        <div class="icon">🚀</div>
+        <div class="tag-line" style="display:flex;gap:6px;margin-bottom:10px"><span class="agent-pill pill-legacy" style="font-size:.72rem"><span class="dot"></span>@legacy-code</span><span class="agent-pill pill-knowledge" style="font-size:.72rem"><span class="dot"></span>@knowledge</span></div>
+        <h3>Onboarding to a legacy module</h3>
+        <p>New engineer opens an unfamiliar Struts Action or COBOL program. Gets a plain-language walkthrough + grounded context in minutes, not weeks.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📋</div>
+        <div class="tag-line" style="display:flex;gap:6px;margin-bottom:10px"><span class="agent-pill pill-review" style="font-size:.72rem"><span class="dot"></span>@review</span><span class="agent-pill pill-knowledge" style="font-size:.72rem"><span class="dot"></span>@knowledge</span></div>
+        <h3>Pre-refactor safety brief</h3>
+        <p>"I want to remove the cursor loop in <code>usp_CalcInterest</code>." → required characterization tests, do-not-touch check, phased rollback plan.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🚨</div>
+        <div class="tag-line" style="display:flex;gap:6px;margin-bottom:10px"><span class="agent-pill pill-knowledge" style="font-size:.72rem"><span class="dot"></span>@knowledge</span><span class="agent-pill pill-legacy" style="font-size:.72rem"><span class="dot"></span>@legacy-code</span></div>
+        <h3>Incident triage</h3>
+        <p>"<code>NB_POST_NIGHTLY</code> failed at step 040." → runbook excerpt + code-level walkthrough + safety check on the proposed hotfix.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔍</div>
+        <div class="tag-line" style="display:flex;gap:6px;margin-bottom:10px"><span class="agent-pill pill-review" style="font-size:.72rem"><span class="dot"></span>@review</span></div>
+        <h3>PR review</h3>
+        <p>Diff lands. <code>@review</code> finds <code>[blocker]</code> SQL injection, <code>[major]</code> race conditions, and confirms no invariants violated.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🗺️</div>
+        <div class="tag-line" style="display:flex;gap:6px;margin-bottom:10px"><span class="agent-pill pill-legacy" style="font-size:.72rem"><span class="dot"></span>@legacy-code</span><span class="agent-pill pill-review" style="font-size:.72rem"><span class="dot"></span>@review</span></div>
+        <h3>Modernization scoping</h3>
+        <p>"Score modernization opportunities in the Claims module." → value × blast-radius × effort matrix + recommended sequencing.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🗄️</div>
+        <div class="tag-line" style="display:flex;gap:6px;margin-bottom:10px"><span class="agent-pill pill-legacy" style="font-size:.72rem"><span class="dot"></span>@legacy-code</span></div>
+        <h3>Schema sense-making</h3>
+        <p>1,800-line stored proc or wide non-normalized table → column dictionary, implicit FKs inferred from joins, ranked refactor roadmap.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11 — ROADMAP ============ -->
+<section class="slide" id="s11">
+  <span class="slide-num">11 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">Roadmap</span>
+    <h2>What's <span class="gradient-text">next</span></h2>
+    <p class="lead">Shipped today is a working multi-agent legacy copilot. Here's the ladder.</p>
+
+    <div class="roadmap">
+      <div class="road-col now">
+        <span class="when">✓ Now · Shipped</span>
+        <h3>Foundation</h3>
+        <ul>
+          <li>3 agents · 8 skills · routing rules</li>
+          <li>Grounding conventions + knowledge schema</li>
+          <li>Prompt templates for every workflow</li>
+          <li>Realistic demo artifacts (COBOL, Struts, SQL)</li>
+          <li>3-minute hackathon demo script</li>
+          <li>PowerShell CLI helper (auto-routes prompts)</li>
+        </ul>
+      </div>
+      <div class="road-col next">
+        <span class="when">→ 30–90 Days</span>
+        <h3>Automation</h3>
+        <ul>
+          <li><strong>KnowledgeIngestor</strong> — PDF / Confluence / Word → headered markdown</li>
+          <li>Static analyzers — Struts graph · COBOL PERFORM/CALL · T-SQL deps</li>
+          <li>Characterization-test generator</li>
+          <li>One-click modernization brief generator</li>
+          <li>Multi-repo grounding (org-wide tribal recall)</li>
+        </ul>
+      </div>
+      <div class="road-col beyond">
+        <span class="when">★ Beyond</span>
+        <h3>Expansion</h3>
+        <ul>
+          <li><strong>MainframeAgent</strong> — VSAM · DB2 · IMS · CICS</li>
+          <li><strong>DataAgent</strong> — SSIS · DataStage · Informatica</li>
+          <li>Voice-mode SME capture → auto-promote to knowledge</li>
+          <li>GitHub Actions PR reviewer integration</li>
+          <li>VS Code extension w/ inline citation panel</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12 — CLOSING ============ -->
+<section class="slide closing" id="s12">
+  <span class="slide-num">12 / 12</span>
+  <div class="slide-inner">
+    <span class="eyebrow">One Line</span>
+    <h1>Legacy isn't <span style="color:var(--danger)">bad</span> code.<br/>It's <span class="gradient-text">load-bearing</span> code.</h1>
+    <p class="tagline">
+      We make it readable, reviewable, and ready for the next 20 years.
+    </p>
+
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:30px">
+      <span class="agent-pill pill-legacy"><span class="dot"></span>@legacy-code</span>
+      <span class="agent-pill pill-knowledge"><span class="dot"></span>@knowledge</span>
+      <span class="agent-pill pill-review"><span class="dot"></span>@review</span>
+      <span class="agent-pill pill-skill"><span class="dot"></span>8 skills</span>
+      <span class="agent-pill pill-kbase"><span class="dot"></span>grounded knowledge</span>
+    </div>
+
+    <a class="cta" href="https://github.com/washington-dcyf-u04_clabs/cw-legacy-codeagent" target="_blank" rel="noopener">
+      🔗 github.com/washington-dcyf-u04_clabs/cw-legacy-codeagent
+    </a>
+
+    <div class="hero-stats mt-xl">
+      <div class="stat"><div class="num gradient-text">3</div><div class="lbl">Agents</div></div>
+      <div class="stat"><div class="num gradient-text">8</div><div class="lbl">Skills</div></div>
+      <div class="stat"><div class="num gradient-text">5+</div><div class="lbl">Knowledge Layers</div></div>
+      <div class="stat"><div class="num gradient-text">∞</div><div class="lbl">Citable Answers</div></div>
+    </div>
+
+    <p class="small mt-xl">Thank you. Questions?</p>
+  </div>
+</section>
+
+<!-- ============ NAVIGATION ============ -->
+<nav class="nav-dots" id="navDots">
+  <a href="#s1" data-target="s1" title="Title"></a>
+  <a href="#s2" data-target="s2" title="Problem"></a>
+  <a href="#s3" data-target="s3" title="Why generic AI fails"></a>
+  <a href="#s4" data-target="s4" title="Solution"></a>
+  <a href="#s5" data-target="s5" title="How it works"></a>
+  <a href="#s6" data-target="s6" title="Architecture"></a>
+  <a href="#s7" data-target="s7" title="Demo flow"></a>
+  <a href="#s8" data-target="s8" title="Features"></a>
+  <a href="#s9" data-target="s9" title="Grounding"></a>
+  <a href="#s10" data-target="s10" title="Use cases"></a>
+  <a href="#s11" data-target="s11" title="Roadmap"></a>
+  <a href="#s12" data-target="s12" title="Close"></a>
+</nav>
+
+<div class="nav-arrows">
+  <button id="prevBtn" aria-label="Previous slide">↑</button>
+  <button id="nextBtn" aria-label="Next slide">↓</button>
+</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dots = Array.from(document.querySelectorAll('.nav-dots a'));
+  const progress = document.getElementById('progress');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  let current = 0;
+
+  function setActive(idx){
+    current = Math.max(0, Math.min(slides.length - 1, idx));
+    slides.forEach((s,i) => s.classList.toggle('active', i === current));
+    dots.forEach((d,i) => d.classList.toggle('active', i === current));
+    progress.style.width = ((current + 1) / slides.length * 100) + '%';
+  }
+
+  function goTo(idx){
+    setActive(idx);
+    slides[current].scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  // IntersectionObserver to mark active slide on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting && entry.intersectionRatio > 0.5){
+        const idx = slides.indexOf(entry.target);
+        if(idx >= 0) setActive(idx);
+      }
+    });
+  }, {threshold:[0.5,0.75]});
+  slides.forEach(s => io.observe(s));
+
+  // Arrows
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' '){ e.preventDefault(); goTo(current + 1); }
+    else if(e.key === 'ArrowUp' || e.key === 'PageUp'){ e.preventDefault(); goTo(current - 1); }
+    else if(e.key === 'Home'){ e.preventDefault(); goTo(0); }
+    else if(e.key === 'End'){ e.preventDefault(); goTo(slides.length - 1); }
+  });
+
+  // Dot clicks
+  dots.forEach((d,i) => d.addEventListener('click', (e) => {
+    e.preventDefault();
+    goTo(i);
+  }));
+
+  // Initial state
+  setActive(0);
+})();
+</script>
+
+</body>
+</html>

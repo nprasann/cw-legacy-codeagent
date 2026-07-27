@@ -1,0 +1,199 @@
+LEGACY KNOWLEDGE COPILOT
+Washington State Agency-Wide AI Code Camp Pitch Deck
+Word-friendly presenter text
+
+Note to include on the title or closing slide:
+This project will be added to the Awesome GitHub Copilot Project list: [LINK NEEDED]
+
+
+SLIDE 1
+Title: Legacy Knowledge Copilot
+Subtitle: A GitHub Copilot assistant for reading, reviewing, and modernizing legacy systems with grounded knowledge.
+
+Slide content:
+A multi-agent assistant for legacy enterprise code:
+- COBOL, JCL, Struts 1, JSP, SQL Server, and T-SQL examples.
+- Grounded answers from repo-based knowledge files.
+- Review guidance that treats legacy code as load-bearing.
+- Built around GitHub Copilot conventions and VS Code workflows.
+
+Speaker notes:
+Legacy systems are not just old code. In public-sector environments, they often support benefits, licensing, payments, claims, and other services people depend on. This project shows how GitHub Copilot can be shaped into a grounded assistant that helps teams understand those systems before changing them.
+
+
+SLIDE 2
+Title: The Problem
+Subtitle: Legacy knowledge is spread across code, documents, and people.
+
+Slide content:
+Public agencies and large organizations often face the same pattern:
+- Business rules live in code few people still read comfortably.
+- Operational knowledge sits in runbooks, old notes, and memories.
+- Documentation may be incomplete or out of date.
+- Small changes can have a large blast radius.
+- New staff need support before they can safely maintain the system.
+
+Speaker notes:
+The risk is not only technical debt. It is knowledge debt. A system may still be doing valuable work, but the explanation of how and why it works is fragile. That is where a grounded assistant can help.
+
+
+SLIDE 3
+Title: Why Generic AI Falls Short
+Subtitle: A confident answer is not the same as an auditable answer.
+
+Slide content:
+Legacy modernization needs more than code completion.
+
+Teams need:
+- Source-specific explanations.
+- Citations to tribal notes, runbooks, and technical papers.
+- Confidence labels that separate grounded, partial, and inferred answers.
+- Review behavior that respects documented do-not-touch rules.
+
+Speaker notes:
+In a legacy environment, an answer that sounds right can still be risky. This project makes grounding part of the workflow. If the assistant knows something from the knowledge base, it cites the source. If it is missing context, it says so.
+
+
+SLIDE 4
+Title: The Solution
+Subtitle: Three agents, reusable skills, and a curated knowledge base.
+
+Slide content:
+LegacyCodeAgent:
+Explains COBOL, Struts, JCL, SQL, and cross-layer flows.
+
+KnowledgeAgent:
+Finds and cites tribal knowledge, runbooks, and technical papers.
+
+ReviewAgent:
+Reviews legacy code for risk, correctness, security, and modernization opportunities.
+
+Speaker notes:
+The project separates the jobs. One agent reads code, one grounds answers, and one reviews risk. That makes the assistant easier to reason about and easier to extend.
+
+
+SLIDE 5
+Title: How It Works
+Subtitle: The repository is the assistant's operating model.
+
+Slide content:
+Key folders:
+- .github/copilot: agent and skill instructions.
+- knowledge: tribal notes, runbooks, and technical papers.
+- examples: COBOL, Struts, and SQL demo artifacts.
+- prompts: reusable workflows for explanation, review, and analysis.
+- docs: architecture, grounding, routing, and demo guidance.
+
+Speaker notes:
+This is a useful pattern for state teams because it lives where the work already happens: in a repository. The instructions, examples, and knowledge sources can be reviewed like any other code change.
+
+
+SLIDE 6
+Title: Demo Part 1
+Subtitle: Explain a COBOL batch with cited tribal knowledge.
+
+Slide content:
+Prompt:
+Explain examples/cobol/NB_POST.CBL end-to-end.
+Pull tribal context for magic status codes A, R, H, and Z9.
+Cite every grounded claim.
+
+Expected output:
+- Plain-language summary.
+- Control-flow map.
+- Magic-code table.
+- Citation to the Z9 tribal note.
+- Gaps section for missing knowledge.
+
+Speaker notes:
+The important moment is the Z9 explanation. The assistant should not guess what a magic code means. It should cite the tribal note in the repository, then show what is still missing.
+
+
+SLIDE 7
+Title: Demo Part 2
+Subtitle: Review a Struts action and stored procedure together.
+
+Slide content:
+Prompt:
+Review the ApproveClaimAction.java file and the stored procedure it calls.
+Focus on security, correctness, backward compatibility, and do-not-touch rules.
+
+Expected output:
+- SQL injection risk.
+- Hard-coded credential risk.
+- Transaction-boundary concern.
+- Cross-layer blast-radius discussion.
+- Confirmation that documented invariants were checked.
+
+Speaker notes:
+This is where the project becomes more than an explainer. The assistant is looking across application code, database logic, and batch impact. That is the kind of review legacy systems often need.
+
+
+SLIDE 8
+Title: Demo Part 3
+Subtitle: Make sense of a non-normalized schema.
+
+Slide content:
+Prompt:
+Analyze examples/sql/schema.sql.
+Focus on BILLING.CLAIM, implicit relationships, overloaded columns, and a risk-ranked normalization plan.
+
+Expected output:
+- Column dictionary.
+- Inferred relationships.
+- Overloaded ROUTING_FLAGS explanation.
+- Value-versus-blast-radius modernization roadmap.
+
+Speaker notes:
+The goal is not an abstract rewrite. The goal is practical modernization planning: what can we understand, what should we protect, and where can we safely improve next?
+
+
+SLIDE 9
+Title: Why It Fits Public-Sector Work
+Subtitle: Modernization needs trust, continuity, and workforce support.
+
+Slide content:
+Relevant themes:
+- Preserve institutional knowledge.
+- Help new staff onboard into older systems.
+- Support service continuity.
+- Make AI outputs reviewable.
+- Plan incremental modernization instead of risky rewrites.
+
+Speaker notes:
+For Washington State teams, the value is not just technical novelty. It is workforce empowerment. People can learn faster, ask better questions, and make safer changes when knowledge is closer to the code.
+
+
+SLIDE 10
+Title: GitHub-Ready Pattern
+Subtitle: The project can grow through normal repository practices.
+
+Slide content:
+Recommended additions:
+- Add real screenshots under docs/images.
+- Seed knowledge/do-not-touch with worked examples.
+- Add tests for prompt contracts and routing expectations.
+- Add contribution guidance for knowledge files.
+- Keep README claims tied to demo assets.
+
+Speaker notes:
+This is a strong repository pattern because it is inspectable. New knowledge files can come through pull requests. Prompt templates can be reviewed. Architecture decisions can be documented alongside the code.
+
+
+SLIDE 11
+Title: Close
+Subtitle: Legacy is load-bearing. Treat it with care.
+
+Slide content:
+Legacy Knowledge Copilot helps teams:
+- Read legacy code faster.
+- Ground explanations in documented knowledge.
+- Review changes with a risk lens.
+- Turn missing context into a knowledge backlog.
+- Build modernization plans that respect service continuity.
+
+Closing line:
+The goal is not to replace legacy experts. The goal is to preserve their knowledge and help the next team use it safely.
+
+Speaker notes:
+The strongest version of AI in this space is not a shortcut around expertise. It is a way to capture, cite, and share expertise so public services can keep improving.
