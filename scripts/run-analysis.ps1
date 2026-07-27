@@ -48,7 +48,7 @@
         -Question "Focus on backward-compat with NB_POST_NIGHTLY."
 
 .NOTES
-    Repo: https://github.com/washington-dcyf-u04_clabs/cw-legacy-codeagent
+    Repo: https://github.com/nprasann/cw-legacy-codeagent
     Docs: docs/usage.md, docs/agent-routing.md
 #>
 

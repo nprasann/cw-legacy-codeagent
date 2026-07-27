@@ -24,7 +24,7 @@
 
 This repository includes an enhanced standalone pitch page at [`index.html`](index.html) and a Word-friendly pitch draft at [`docs/pitch/wa-ai-code-camp-pitch-deck.txt`](docs/pitch/wa-ai-code-camp-pitch-deck.txt).
 
-> This project will be added to the Awesome GitHub Copilot Project list: **[LINK NEEDED]**
+> This project will be added to the Awesome GitHub Copilot Project list: **https://awesome-copilot.github.com**
 
 The original uploaded archive and original standalone HTML are preserved under [`original-uploads/`](original-uploads/) for traceability.
 
@@ -178,7 +178,7 @@ Routing rules and worked workflows (COBOL → explain + ground, SQL → analyze 
 **Try it in 60 seconds**
 
 ```powershell
-git clone https://github.com/washington-dcyf-u04_clabs/cw-legacy-codeagent.git
+git clone https://github.com/nprasann/cw-legacy-codeagent.git
 cd cw-legacy-codeagent
 code .
 ```

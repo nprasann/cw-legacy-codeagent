@@ -3,7 +3,7 @@ Washington State Agency-Wide AI Code Camp Pitch Deck
 Word-friendly presenter text
 
 Note to include on the title or closing slide:
-This project will be added to the Awesome GitHub Copilot Project list: [LINK NEEDED]
+This project will be added to the Awesome GitHub Copilot Project list: https://awesome-copilot.github.com
 
 
 SLIDE 1

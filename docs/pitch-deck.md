@@ -21,6 +21,8 @@
 - A multi-agent GitHub Copilot assistant for legacy enterprise systems.
 - Built on `github/awesome-copilot` conventions. Runs in VS Code.
 - 100% grounded. 0% hallucinated.
+- This project will be added to the Awesome GitHub Copilot Project list:
+  https://awesome-copilot.github.com
 
 > **Speaker notes (≈20s)**
 > Hi, I'm here to show you Legacy Knowledge Copilot. In the next four minutes I'll show you how a multi-agent AI assistant turns impenetrable legacy code, plus the tribal knowledge that's about to walk out the door at retirement, into reviewable, citable, change-ready insight — without leaving VS Code. Let's go.
@@ -217,7 +219,10 @@ Honor /knowledge/do-not-touch.
 
 > **Legacy isn't bad code. It's load-bearing code. We make it readable, reviewable, and ready for the next 20 years.**
 
-🔗 [github.com/washington-dcyf-u04_clabs/cw-legacy-codeagent](https://github.com/washington-dcyf-u04_clabs/cw-legacy-codeagent)
+🔗 [github.com/nprasann/cw-legacy-codeagent](https://github.com/nprasann/cw-legacy-codeagent)
+
+Awesome GitHub Copilot Project list:
+https://awesome-copilot.github.com
 
 > **Speaker notes (≈25s)**
 > In thirty days we ship the knowledge ingestor — drop a PDF in, get a headered markdown file out. In ninety, we wire in static analyzers and a characterization-test generator. Beyond that, mainframe and ETL stacks, a GitHub Actions PR reviewer, and voice-mode SME capture. To close: legacy isn't bad code, it's load-bearing code. We make it readable, reviewable, and ready for the next twenty years. Repo's open. Thank you.

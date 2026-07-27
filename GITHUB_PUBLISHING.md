@@ -18,7 +18,11 @@ Initial commit message:
 Add Legacy Knowledge Copilot code camp materials
 ```
 
-Before publishing, replace `[LINK NEEDED]` in `README.md` and `index.html` with the final Awesome GitHub Copilot Project list link.
+Awesome GitHub Copilot Project list link used in the presentation materials:
+
+```text
+https://awesome-copilot.github.com
+```
 
 ## Contents Included
 
@@ -26,4 +30,5 @@ Before publishing, replace `[LINK NEEDED]` in `README.md` and `index.html` with 
 - Original uploaded `index.html`, preserved in `original-uploads/index-original-upload.html`.
 - Enhanced `index.html` pitch deck for Washington State AI Code Camp.
 - Word-friendly pitch draft in `docs/pitch/wa-ai-code-camp-pitch-deck.txt`.
+- Story-style speaker script in `docs/pitch/speaker-notes-story-script.md`.
 - Original uploaded zip preserved in `original-uploads/`.
