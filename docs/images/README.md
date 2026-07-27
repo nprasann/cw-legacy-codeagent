@@ -13,5 +13,5 @@ no shadow, light theme for projector visibility.
 | `architecture.png`   | Architecture diagram (or screenshot of the rendered mermaid). |
 | `routing.png`        | Routing flowchart from [docs/agent-routing.md](../agent-routing.md). |
 
-Until real screenshots exist, the README will show alt text — that's fine
-for the repo, and the README itself notes "screenshot placeholder" inline.
+Until real screenshots exist, the root README uses text callouts instead of
+Markdown image tags so GitHub does not show broken image placeholders.

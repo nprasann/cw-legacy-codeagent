@@ -14,7 +14,7 @@
 
 <sub>Structure follows <a href="https://github.com/github/awesome-copilot">github/awesome-copilot</a> conventions.</sub>
 
-![hero — screenshot placeholder](docs/images/hero.png)
+<sub>Demo screenshots are planned under <a href="docs/images">docs/images</a>. Until then, this README uses text callouts instead of broken placeholder images.</sub>
 
 </div>
 
@@ -92,7 +92,7 @@ Pull tribal context from /knowledge/tribal for magic status codes
 **Watch for:** the magic-code table where `Z9` is cited directly from
 [knowledge/tribal/nb-post-z9-special-hold.md](knowledge/tribal/nb-post-z9-special-hold.md) — and the `Gaps` section that tells you what knowledge is still missing.
 
-![Demo 1 — COBOL with citations](docs/images/demo-cobol.png)
+> **Screenshot planned:** `docs/images/demo-cobol.png` — Copilot explaining `NB_POST.CBL` with the grounded `Z9` citation visible.
 
 ---
 
@@ -108,7 +108,7 @@ backward-compat with NB_POST_NIGHTLY. Honor /knowledge/do-not-touch.
 ```
 **Watch for:** `[blocker] [security] SQL injection`, `[blocker] [security] Hard-coded credentials`, `[major] [correctness] No transaction boundary`, **and** an explicit statement that the `Z9` invariant was NOT violated — because the agent checked `/knowledge`.
 
-![Demo 2 — Legacy-aware review](docs/images/demo-review.png)
+> **Screenshot planned:** `docs/images/demo-review.png` — `@review` findings with severity labels and the do-not-touch check.
 
 ---
 
@@ -124,7 +124,7 @@ normalization opportunities that honor /knowledge/do-not-touch.
 ```
 **Watch for:** inferred foreign keys that were never declared, the `ROUTING_FLAGS` bitfield decoded, and a value-vs-blast-radius ranking you can drop straight into a roadmap.
 
-![Demo 3 — Schema sense-making](docs/images/demo-schema.png)
+> **Screenshot planned:** `docs/images/demo-schema.png` — SQL schema analysis with inferred relationships and ranked modernization opportunities.
 
 ---
 
@@ -146,7 +146,7 @@ flowchart TB
   RA --> KB
 ```
 
-![Architecture — screenshot placeholder](docs/images/architecture.png)
+> **Screenshot planned:** `docs/images/architecture.png` — rendered architecture diagram or VS Code workspace view.
 
 **Three layers, one assistant:**
 
@@ -158,7 +158,7 @@ flowchart TB
 
 Routing rules and worked workflows (COBOL → explain + ground, SQL → analyze + review, incident → runbook → code) are documented in **[docs/agent-routing.md](docs/agent-routing.md)**.
 
-![Routing flowchart — screenshot placeholder](docs/images/routing.png)
+> **Screenshot planned:** `docs/images/routing.png` — routing flowchart from [docs/agent-routing.md](docs/agent-routing.md).
 
 ### Why this design wins
 
